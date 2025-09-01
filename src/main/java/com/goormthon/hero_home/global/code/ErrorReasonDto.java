@@ -12,7 +12,7 @@ public class ErrorReasonDto {
     private final String code;
     private final String message;
 
-    public boolean getIsSuccess() {
+    public boolean isSuccess() {
         return isSuccess;
     }
 }

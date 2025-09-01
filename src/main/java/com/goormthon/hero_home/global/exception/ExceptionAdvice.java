@@ -33,7 +33,13 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("ConstraintViolationException 추출 도중 에러 발생"));
 
-        return handleExceptionInternalConstraint(e, ErrorStatus.valueOf(errorMessage), HttpHeaders.EMPTY, request);
+        ErrorStatus status;
+        try {
+            status = ErrorStatus.valueOf(errorMessage);
+        } catch (IllegalArgumentException ex) {
+            status = ErrorStatus.BAD_REQUEST;
+        }
+        return handleExceptionInternalConstraint(e, status, HttpHeaders.EMPTY, request);
     }
 
     @Override
@@ -48,12 +54,12 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                     errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                 });
 
-        return handleExceptionInternalArgs(ex, HttpHeaders.EMPTY, ErrorStatus.valueOf("_BAD_REQUEST"), request, errors);
+        return handleExceptionInternalArgs(ex, HttpHeaders.EMPTY, ErrorStatus.BAD_REQUEST, request, errors);
     }
 
     @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
-        e.printStackTrace();
+        log.error("Unexpected error occurred", e);
 
         return handleExceptionInternalFalse(e, ErrorStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus(), request, e.getMessage());
     }
