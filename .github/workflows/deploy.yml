@@ -3,10 +3,10 @@ name: Deploy To EC2
 on:
   push:
     branches:
-      - feat/#3
+      - main
   pull_request:
     branches:
-      - feat/#3
+      - main
 
 jobs:
   deploy:
