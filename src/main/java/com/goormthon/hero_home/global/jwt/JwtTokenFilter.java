@@ -29,6 +29,7 @@ import java.util.List;
 public class JwtTokenFilter extends GenericFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final BlacklistTokenService blacklistTokenService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
@@ -39,8 +40,30 @@ public class JwtTokenFilter extends GenericFilter {
         
         try {
             String token = extractTokenFromRequest(httpRequest);
+            String requestUri = httpRequest.getRequestURI();
             
-            if (token != null && jwtTokenProvider.validateToken(token)) {
+            // 인증이 필요한 경로인지 확인
+            if (requiresAuthentication(requestUri)) {
+                if (token == null) {
+                    log.warn("인증이 필요한 경로에 토큰이 없음: {}", requestUri);
+                    sendUnauthorizedResponse(httpResponse, "인증 토큰이 필요합니다.");
+                    return;
+                }
+                
+                if (!jwtTokenProvider.validateToken(token)) {
+                    log.warn("유효하지 않은 토큰: {}", requestUri);
+                    sendUnauthorizedResponse(httpResponse, "유효하지 않은 토큰입니다.");
+                    return;
+                }
+                
+                if (blacklistTokenService.isTokenBlacklisted(token)) {
+                    log.warn("블랙리스트된 토큰 사용 시도: {}", requestUri);
+                    sendUnauthorizedResponse(httpResponse, "사용할 수 없는 토큰입니다.");
+                    return;
+                }
+            }
+            
+            if (token != null && jwtTokenProvider.validateToken(token) && !blacklistTokenService.isTokenBlacklisted(token)) {
                 // JWT에서 사용자 정보 추출
                 String email = jwtTokenProvider.getEmailFromToken(token);
                 String role = jwtTokenProvider.getRoleFromToken(token);
@@ -69,10 +92,7 @@ public class JwtTokenFilter extends GenericFilter {
         } catch (Exception e) {
             log.error("JWT 토큰 처리 중 오류 발생", e);
             SecurityContextHolder.clearContext();
-            
-            httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-            httpResponse.setContentType("application/json; charset=UTF-8");
-            httpResponse.getWriter().write("{\"error\":\"유효하지 않은 토큰입니다.\"}");
+            sendUnauthorizedResponse(httpResponse, "인증 처리 중 오류가 발생했습니다.");
         }
     }
 
@@ -84,5 +104,15 @@ public class JwtTokenFilter extends GenericFilter {
         }
         
         return null;
+    }
+    
+    private boolean requiresAuthentication(String requestUri) {
+        return requestUri.startsWith("/user/");
+    }
+    
+    private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json; charset=UTF-8");
+        response.getWriter().write("{\"error\":\"" + message + "\"}");
     }
 }
