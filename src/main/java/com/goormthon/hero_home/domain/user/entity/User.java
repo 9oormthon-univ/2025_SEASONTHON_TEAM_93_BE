@@ -43,4 +43,9 @@ public class User extends BaseEntity {
         this.socialId = socialId;
         this.socialType = socialType;
     }
+
+    public User updateName(String name) {
+        this.name = name;
+        return this;
+    }
 }
