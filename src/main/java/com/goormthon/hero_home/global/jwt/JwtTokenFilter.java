@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -71,11 +72,14 @@ public class JwtTokenFilter extends GenericFilter {
                 // Authentication 객체 생성
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 // Role enum에 이미 ROLE_ 접두사가 있는지 확인하고 처리
+                String authority;
                 if (!role.startsWith("ROLE_")) {
-                    authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                    authority = "ROLE_" + role;
                 } else {
-                    authorities.add(new SimpleGrantedAuthority(role));
+                    authority = role;
                 }
+                authorities.add(new SimpleGrantedAuthority(authority));
+                log.debug("JWT 사용자 권한 생성: {}", authority);
                 
                 UserDetails userDetails = new User(email, "", authorities);
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -89,6 +93,9 @@ public class JwtTokenFilter extends GenericFilter {
             
             chain.doFilter(request, response);
             
+        } catch (AuthorizationDeniedException e) {
+            // 권한 거부는 Spring Security가 처리하도록 재전파
+            throw e;
         } catch (Exception e) {
             log.error("JWT 토큰 처리 중 오류 발생", e);
             SecurityContextHolder.clearContext();

@@ -5,10 +5,9 @@ import com.goormthon.hero_home.domain.user.entity.User;
 import com.goormthon.hero_home.domain.warmemoir.entity.WarMemoir;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,8 +19,10 @@ public class WarMemoirReply extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,4 +32,21 @@ public class WarMemoirReply extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public WarMemoirReply(String title, String content, WarMemoir warMemoir, User user) {
+        this.title = title;
+        this.content = content;
+        this.warMemoir = warMemoir;
+        this.user = user;
+    }
+
+    public void updateReply(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public boolean isAuthor(User user) {
+        return this.user.equals(user);
+    }
 }

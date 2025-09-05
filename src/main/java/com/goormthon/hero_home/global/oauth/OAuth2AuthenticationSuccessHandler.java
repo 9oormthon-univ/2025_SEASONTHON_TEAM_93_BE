@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -22,6 +23,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+
+    @Value("${app.oauth2.success-redirect-url:http://localhost:3000/oauth/success}")
+    private String successRedirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, 
@@ -42,8 +46,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         log.info("JWT 토큰 생성 완료. 사용자: {}", user.getEmail());
         
         // 프론트엔드로 리다이렉트 (토큰 포함)
-        String redirectUrl = String.format("http://localhost:3000/oauth/success?token=%s&email=%s&id=%d", 
-                token, user.getEmail(), user.getId());
+        String redirectUrl = String.format("%s?token=%s&email=%s&id=%d", 
+                successRedirectUrl, token, user.getEmail(), user.getId());
         
         log.info("리다이렉트 URL: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
