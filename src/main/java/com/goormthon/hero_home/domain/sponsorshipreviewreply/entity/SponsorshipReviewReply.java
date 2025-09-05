@@ -1,17 +1,18 @@
 package com.goormthon.hero_home.domain.sponsorshipreviewreply.entity;
 
+import com.goormthon.hero_home.domain.common.BaseEntity;
 import com.goormthon.hero_home.domain.sponsorshipreview.entity.SponsorshipReview;
 import com.goormthon.hero_home.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(name = "sponsorship_review_reply")
-public class SponsorshipReviewReply {
+public class SponsorshipReviewReply extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
