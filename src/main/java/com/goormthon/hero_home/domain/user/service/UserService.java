@@ -48,10 +48,9 @@ public class UserService {
         
         log.info("회원 탈퇴 처리: {} (ID: {})", user.getEmail(), userId);
         
-        // TODO: 관련 데이터 처리 (회고록, 후원 등)
-        // - 사용자가 작성한 회고록 처리
+        // TODO: 관련 데이터 처리 (후원)
         // - 사용자의 후원 내역 처리
-        // - 사용자의 댓글/리뷰 처리
+        // - 사용자의 댓글 처리
         
         // 하드 삭제 (실제 데이터 삭제)
         userRepository.delete(user);

@@ -20,7 +20,7 @@ public enum ErrorStatus implements BaseErrorCode {
     S3_EMPTY_FILE(HttpStatus.BAD_REQUEST, "S34003", "업로드할 파일이 없습니다."),
 
     //user
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER404", "해당 유저를 찾을 수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "존재하지 않는 사용자입니다."),
 
     //board
     BOARD_NOT_FOUNT(HttpStatus.NOT_FOUND, "BOARD404", "해당 글을 찾을 수 없습니다."),
@@ -31,6 +31,12 @@ public enum ErrorStatus implements BaseErrorCode {
     //reply
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "REPLY404", "해당 댓글을 찾을 수 없습니다."),
     REPLY_DELETE_NOT_ALLOWED(HttpStatus.FORBIDDEN, "COMMON403", "댓글을 삭제할 권한이 없습니다."),
+
+    //war memoir
+    WAR_MEMOIR_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMOIR4001", "존재하지 않는 회고록입니다."),
+
+    //letter
+    LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "LETTER4001", "존재하지 않는 편지입니다."),
 
     //sponsorshipstatus
     DONATION_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "DONATION_STATUS_NOT_FOUND", "후원 현황 내역이 존재하지 않습니다.");
