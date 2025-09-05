@@ -2,13 +2,13 @@ package com.goormthon.hero_home.domain.sponsorshipreview.entity;
 
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoard;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(name = "sponsorship_review")
 public class SponsorshipReview {
 

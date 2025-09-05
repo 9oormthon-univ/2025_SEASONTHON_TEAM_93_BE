@@ -2,6 +2,7 @@ package com.goormthon.hero_home.domain.sponsorshipreview.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,10 @@ public class SponsorshipReviewPhotos {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sponsorship_review_id")
     private SponsorshipReview sponsorshipReview;
+
+    @Builder
+    public SponsorshipReviewPhotos(String filePath, SponsorshipReview sponsorshipReview) {
+        this.filePath = filePath;
+        this.sponsorshipReview = sponsorshipReview;
+    }
 }
