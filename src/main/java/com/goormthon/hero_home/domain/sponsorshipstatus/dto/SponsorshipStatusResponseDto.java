@@ -18,4 +18,11 @@ public class SponsorshipStatusResponseDto {
         LocalDateTime createdAt;
         Long sponsorshipBoardId;
     }
+
+    @Getter
+    @Builder
+    public static class SponsorshipProgressInfo {
+        Integer targetAmount;
+        Integer currentAmount;
+    }
 }

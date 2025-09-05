@@ -15,4 +15,11 @@ public class SponsorshipStatusConverter {
                 .isApproved(sponsorshipStatus.getIsApproved())
                 .build();
     }
+
+    public static SponsorshipStatusResponseDto.SponsorshipProgressInfo toSponsorshipProgressInfo(Integer targetAmount, Integer currentAmount) {
+        return SponsorshipStatusResponseDto.SponsorshipProgressInfo.builder()
+                .targetAmount(targetAmount)
+                .currentAmount(currentAmount)
+                .build();
+    }
 }

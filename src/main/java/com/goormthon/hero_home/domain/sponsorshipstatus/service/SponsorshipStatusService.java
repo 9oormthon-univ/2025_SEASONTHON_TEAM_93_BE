@@ -15,6 +15,7 @@ import com.goormthon.hero_home.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class SponsorshipStatusService {
     private final SponsorshipBoardRepository sponsorshipBoardRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public void donate(Authentication authentication, Long boardId,
                        SponsorshipStatusRequestDto.SponsorshipDonationInfo donationInfo) {
 
@@ -41,13 +43,12 @@ public class SponsorshipStatusService {
                 .isApproved(false) //관리자의 승인이 있어야 함
                 .build();
 
-        int newAmount = sponsorshipBoard.getCurrentAmount() + donationInfo.getAmount();
-
-        SponsorshipBoard.builder().currentAmount(newAmount);
+        sponsorshipBoardRepository.increaseCurrentAmount(boardId, donationInfo.getAmount());
 
         sponsorshipStatusRepository.save(sponsorshipStatus);
     }
 
+    @Transactional
     public void approveDonation(Long statusId, Authentication authentication) {
         User user = getUser(authentication);
         checkAdminRole(user);
@@ -66,10 +67,27 @@ public class SponsorshipStatusService {
         sponsorshipStatusRepository.save(updatedStatus);
     }
 
+    @Transactional(readOnly = true)
     public List<SponsorshipStatusResponseDto.SponsorshipDonationInfo> getAllSponsorshipStatus(Authentication authentication) {
         return sponsorshipStatusRepository.findAll()
                 .stream().map(SponsorshipStatusConverter::toSponsorshipStatusInfo)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SponsorshipStatusResponseDto.SponsorshipDonationInfo> getUserDonation(Authentication authentication) {
+        User user = getUser(authentication);
+        return sponsorshipStatusRepository.findByUser(user)
+                .stream().map(SponsorshipStatusConverter::toSponsorshipStatusInfo)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public SponsorshipStatusResponseDto.SponsorshipProgressInfo getSponsorshipProgress(Long boardId) {
+        SponsorshipBoard sponsorshipBoard = sponsorshipBoardRepository.findById(boardId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUNT));
+
+        return SponsorshipStatusConverter.toSponsorshipProgressInfo(sponsorshipBoard.getTargetAmount(), sponsorshipBoard.getCurrentAmount());
     }
 
     private User getUser(Authentication authentication) {
@@ -81,7 +99,7 @@ public class SponsorshipStatusService {
     }
 
     private void checkAdminRole(User user) {
-        if(user.getRole() != Role.ADMIN) {
+        if (user.getRole() != Role.ADMIN) {
             throw new GeneralException(ErrorStatus.FORBIDDEN);
         }
     }
