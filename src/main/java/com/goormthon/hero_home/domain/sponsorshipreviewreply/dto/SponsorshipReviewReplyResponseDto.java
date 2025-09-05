@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class SponsorshipReviewReplyResponseDto {
 
@@ -13,7 +14,7 @@ public class SponsorshipReviewReplyResponseDto {
         Long replyId;
         String title;
         String content;
-        LocalDate createdAt;
+        LocalDateTime createdAt;
         String email;
     }
 }

@@ -16,6 +16,7 @@ public class SponsorshipBoardConverter {
                 .sponsorshipBoardStatus(sponsorshipBoard.getSponsorshipStatus())
                 .content(sponsorshipBoard.getContent())
                 .currentAmount(sponsorshipBoard.getCurrentAmount())
+                .targetAmount(sponsorshipBoard.getTargetAmount())
                 .startDate(sponsorshipBoard.getStartDate())
                 .endDate(sponsorshipBoard.getEndDate())
                 .currentAmount(sponsorshipBoard.getCurrentAmount())

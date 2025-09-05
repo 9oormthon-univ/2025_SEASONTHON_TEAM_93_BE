@@ -4,6 +4,7 @@ import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoardSt
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,8 +18,8 @@ public class SponsorshipBoardResponseDto {
         String subTitle;
         String content;
         Integer targetAmount;
-        LocalDateTime startDate;
-        LocalDateTime endDate;
+        LocalDate startDate;
+        LocalDate endDate;
         Integer currentAmount;
         SponsorshipBoardStatus sponsorshipBoardStatus;
         List<String> sponsorshipBoardPhotos;

@@ -8,12 +8,14 @@ import com.goormthon.hero_home.domain.sponsorshipboard.dto.SponsorshipBoardReque
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoard;
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoardPhotos;
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoardStatus;
+import com.goormthon.hero_home.domain.user.entity.Role;
 import com.goormthon.hero_home.domain.user.entity.User;
 import com.goormthon.hero_home.domain.user.repository.UserRepository;
 import com.goormthon.hero_home.global.aws.AwsS3Service;
 import com.goormthon.hero_home.global.code.status.ErrorStatus;
 import com.goormthon.hero_home.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -22,10 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SponsorshipBoardService {
 
     private final SponsorshipBoardRepository sponsorshipBoardRepository;
@@ -37,8 +39,9 @@ public class SponsorshipBoardService {
     public void registerBoard(Authentication authentication,
                               SponsorshipBoardRequestDto.BoardInfoRequestDto boardInfoRequestDto,
                               List<MultipartFile> imgs) {
-
+        
         User user = getUserFromAuthentication(authentication);
+        checkAdminRole(user);
 
         SponsorshipBoard sponsorshipBoard = SponsorshipBoard.builder()
                 .title(boardInfoRequestDto.getTitle())
@@ -71,6 +74,9 @@ public class SponsorshipBoardService {
         SponsorshipBoard board = sponsorshipBoardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUNT));
 
+        User user = getUserFromAuthentication(authentication);
+        checkAdminRole(user);
+
         SponsorshipBoard updateBoard = SponsorshipBoard.builder()
                 .id(board.getId())
                 .title(boardInfoRequestDto.getTitle())
@@ -95,6 +101,9 @@ public class SponsorshipBoardService {
 
     @Transactional
     public void deleteBoard(Authentication authentication, Long boardId) {
+        User user = getUserFromAuthentication(authentication);
+        checkAdminRole(user);
+
         SponsorshipBoard sponsorshipBoard = sponsorshipBoardRepository.findById(boardId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUNT));
 
@@ -134,6 +143,12 @@ public class SponsorshipBoardService {
                     .build();
 
             sponsorshipBoardPhotosRepository.save(photos);
+        }
+    }
+
+    private void checkAdminRole(User user) {
+        if(user.getRole() != Role.ADMIN) {
+            throw new GeneralException(ErrorStatus.FORBIDDEN);
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.goormthon.hero_home.domain.sponsorshipreview.service;
 
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoard;
-import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoardPhotos;
 import com.goormthon.hero_home.domain.sponsorshipboard.repository.SponsorshipBoardRepository;
 import com.goormthon.hero_home.domain.sponsorshipreview.converter.SponsorshipReviewConverter;
 import com.goormthon.hero_home.domain.sponsorshipreview.dto.SponsorshipReviewRequestDto;
@@ -10,6 +9,7 @@ import com.goormthon.hero_home.domain.sponsorshipreview.entity.SponsorshipReview
 import com.goormthon.hero_home.domain.sponsorshipreview.entity.SponsorshipReviewPhotos;
 import com.goormthon.hero_home.domain.sponsorshipreview.repository.SponsorshipReviewPhotosRepository;
 import com.goormthon.hero_home.domain.sponsorshipreview.repository.SponsorshipReviewRepository;
+import com.goormthon.hero_home.domain.user.entity.Role;
 import com.goormthon.hero_home.domain.user.entity.User;
 import com.goormthon.hero_home.domain.user.repository.UserRepository;
 import com.goormthon.hero_home.global.aws.AwsS3Service;
@@ -42,8 +42,10 @@ public class SponsorshipReviewService {
 
         String email = authentication.getName();
 
-        userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        checkAdminRole(user);
 
         SponsorshipBoard sponsorshipBoard = sponsorshipBoardRepository.findById(sponsorshipReviewInfoDto.getSponsorshipBoardId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOARD_NOT_FOUNT));
@@ -60,8 +62,8 @@ public class SponsorshipReviewService {
     }
 
     @Transactional(readOnly = true)
-    public SponsorshipReviewResponseDto.SponsorshipReviewInfo getReview(Long boardId) {
-        SponsorshipReview sponsorshipReview = sponsorshipReviewRepository.findById(boardId)
+    public SponsorshipReviewResponseDto.SponsorshipReviewInfo getReview(Long reviewId) {
+        SponsorshipReview sponsorshipReview = sponsorshipReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
         List<SponsorshipReviewPhotos> reviewPhotos = sponsorshipReviewPhotosRepository.findBySponsorshipReview(sponsorshipReview);
@@ -70,7 +72,7 @@ public class SponsorshipReviewService {
 
     @Transactional
     public void updateReview(Authentication authentication, Long reviewId,
-                             SponsorshipReviewRequestDto.SponsorshipReviewInfo sponsorshipReviewInfoDto,
+                             SponsorshipReviewRequestDto.SponsorshipReviewUpdate sponsorshipReviewUpdate,
                              List<MultipartFile> imgs) {
 
         String email = authentication.getName();
@@ -78,13 +80,15 @@ public class SponsorshipReviewService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
+        checkAdminRole(user);
+
         SponsorshipReview sponsorshipReview = sponsorshipReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
         SponsorshipReview updateReview = SponsorshipReview.builder()
                 .id(sponsorshipReview.getId())
-                .title(sponsorshipReviewInfoDto.getTitle())
-                .content(sponsorshipReviewInfoDto.getContent())
+                .title(sponsorshipReviewUpdate.getTitle())
+                .content(sponsorshipReviewUpdate.getContent())
                 .sponsorshipBoard(sponsorshipReview.getSponsorshipBoard())
                 .build();
 
@@ -99,7 +103,14 @@ public class SponsorshipReviewService {
     }
 
     @Transactional
-    public void deleteReview(Long reviewId) {
+    public void deleteReview(Authentication authentication, Long reviewId) {
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        checkAdminRole(user);
+
         SponsorshipReview sponsorshipReview = sponsorshipReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
@@ -133,6 +144,12 @@ public class SponsorshipReviewService {
                     .build();
 
             sponsorshipReviewPhotosRepository.save(photos);
+        }
+    }
+
+    private void checkAdminRole(User user) {
+        if (user.getRole() != Role.ADMIN) {
+            throw new GeneralException(ErrorStatus.FORBIDDEN);
         }
     }
 }

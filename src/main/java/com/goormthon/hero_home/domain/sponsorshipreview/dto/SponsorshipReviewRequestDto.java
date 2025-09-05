@@ -10,4 +10,10 @@ public class SponsorshipReviewRequestDto {
         String title;
         String content;
     }
+
+    @Getter
+    public static class SponsorshipReviewUpdate {
+        String title;
+        String content;
+    }
 }

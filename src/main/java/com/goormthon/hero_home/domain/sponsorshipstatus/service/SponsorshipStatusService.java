@@ -7,6 +7,7 @@ import com.goormthon.hero_home.domain.sponsorshipstatus.dto.SponsorshipStatusReq
 import com.goormthon.hero_home.domain.sponsorshipstatus.dto.SponsorshipStatusResponseDto;
 import com.goormthon.hero_home.domain.sponsorshipstatus.entity.SponsorshipStatus;
 import com.goormthon.hero_home.domain.sponsorshipstatus.repository.SponsorshipStatusRepository;
+import com.goormthon.hero_home.domain.user.entity.Role;
 import com.goormthon.hero_home.domain.user.entity.User;
 import com.goormthon.hero_home.domain.user.repository.UserRepository;
 import com.goormthon.hero_home.global.code.status.ErrorStatus;
@@ -48,6 +49,9 @@ public class SponsorshipStatusService {
     }
 
     public void approveDonation(Long statusId, Authentication authentication) {
+        User user = getUser(authentication);
+        checkAdminRole(user);
+
         SponsorshipStatus status = sponsorshipStatusRepository.findById(statusId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.DONATION_STATUS_NOT_FOUND));
 
@@ -74,5 +78,11 @@ public class SponsorshipStatusService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         return user;
+    }
+
+    private void checkAdminRole(User user) {
+        if(user.getRole() != Role.ADMIN) {
+            throw new GeneralException(ErrorStatus.FORBIDDEN);
+        }
     }
 }

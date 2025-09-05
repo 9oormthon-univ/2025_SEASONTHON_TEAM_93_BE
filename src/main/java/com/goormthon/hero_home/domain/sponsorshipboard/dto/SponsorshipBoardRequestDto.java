@@ -2,6 +2,7 @@ package com.goormthon.hero_home.domain.sponsorshipboard.dto;
 
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class SponsorshipBoardRequestDto {
@@ -12,7 +13,7 @@ public class SponsorshipBoardRequestDto {
         String subTitle;
         String content;
         Integer targetAmount;
-        LocalDateTime startDate;
-        LocalDateTime endDate;
+        LocalDate startDate;
+        LocalDate endDate;
     }
 }

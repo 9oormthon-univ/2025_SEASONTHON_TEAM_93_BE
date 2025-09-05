@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class SponsorshipStatusResponseDto {
 
@@ -14,7 +15,7 @@ public class SponsorshipStatusResponseDto {
         Integer sponsorshipAmount;
         Boolean isApproved;
         String email;
-        LocalDate createdAt;
+        LocalDateTime createdAt;
         Long sponsorshipBoardId;
     }
 }

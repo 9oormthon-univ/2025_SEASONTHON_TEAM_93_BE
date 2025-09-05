@@ -35,8 +35,8 @@ public class SponsorshipReviewReplyService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
         SponsorshipReviewReply reply = SponsorshipReviewReply.builder()
-                .title(sponsorshipReview.getTitle())
-                .content(sponsorshipReview.getContent())
+                .title(sponsorshipReviewInfo.getTitle())
+                .content(sponsorshipReviewInfo.getContent())
                 .sponsorshipReview(sponsorshipReview)
                 .user(user)
                 .build();

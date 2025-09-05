@@ -4,6 +4,8 @@ import com.goormthon.hero_home.domain.sponsorshipstatus.dto.SponsorshipStatusReq
 import com.goormthon.hero_home.domain.sponsorshipstatus.dto.SponsorshipStatusResponseDto;
 import com.goormthon.hero_home.domain.sponsorshipstatus.service.SponsorshipStatusService;
 import com.goormthon.hero_home.global.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,12 +16,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sponsorship-status")
+@Tag(name = "SponsorshipStatus", description = "후원 현황 및 후원 승인 관련 API")
 public class SponsorshipStatusController {
 
     private final SponsorshipStatusService sponsorshipStatusService;
 
-    // 유저의 후원 금액 등록
     @PostMapping("/{boardId}/donate")
+    @Operation(summary = "유저의 후원 금액 등록", description = "유저의 후원 금액 등록 API")
     public ApiResponse<String> donate(Authentication authentication,
                                       @PathVariable Long boardId,
                                       @RequestBody SponsorshipStatusRequestDto.SponsorshipDonationInfo donationInfo) {
@@ -27,18 +30,16 @@ public class SponsorshipStatusController {
         return ApiResponse.onSuccess("Donation successful.");
     }
 
-    //후기 승인 대기 리스트 끌어오기
     @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "관리자의 후원 승인 리스트", description = "관리자의 후원 승인 리스트 API")
     public ApiResponse<List<SponsorshipStatusResponseDto.SponsorshipDonationInfo>> getAllSponsorshipStatus(Authentication authentication) {
         return ApiResponse.onSuccess(sponsorshipStatusService.getAllSponsorshipStatus(authentication));
     }
 
-    //관리자의 후원 승인
-    @PostMapping("/{statudId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<?> approveDonation(@PathVariable Long statuId, Authentication authentication) {
-        sponsorshipStatusService.approveDonation(statuId, authentication);
+    @PostMapping("/{statusId}")
+    @Operation(summary = "관리자의 후원 승인", description = "관리자의 후원 승인 API")
+    public ApiResponse<?> approveDonation(@PathVariable Long statusId, Authentication authentication) {
+        sponsorshipStatusService.approveDonation(statusId, authentication);
         return ApiResponse.onSuccess("Approve Donation successful.");
     }
 

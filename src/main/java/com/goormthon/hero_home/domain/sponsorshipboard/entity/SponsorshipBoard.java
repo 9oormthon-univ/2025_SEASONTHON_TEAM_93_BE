@@ -5,6 +5,7 @@ import com.goormthon.hero_home.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,12 +29,14 @@ public class SponsorshipBoard {
     private Integer targetAmount;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
-    private Integer currentAmount;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer currentAmount = 0;
 
     @Enumerated(EnumType.STRING)
     private SponsorshipBoardStatus sponsorshipStatus;
