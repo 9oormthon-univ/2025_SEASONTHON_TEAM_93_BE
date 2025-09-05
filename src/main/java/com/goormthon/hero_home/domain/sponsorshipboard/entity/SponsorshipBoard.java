@@ -3,15 +3,15 @@ package com.goormthon.hero_home.domain.sponsorshipboard.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.goormthon.hero_home.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(name = "sponsorship_board")
 public class SponsorshipBoard {
 
@@ -27,10 +27,10 @@ public class SponsorshipBoard {
 
     private Integer targetAmount;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime startDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime endDate;
 
     private Integer currentAmount;
