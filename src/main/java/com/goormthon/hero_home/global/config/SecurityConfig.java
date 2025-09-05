@@ -61,6 +61,13 @@ public class SecurityConfig {
                         .requestMatchers("PUT", "/warmemoir/*/replies/**").authenticated() // 댓글 수정 - 모든 사용자
                         .requestMatchers("DELETE", "/warmemoir/*/replies/**").authenticated() // 댓글 삭제 - 모든 사용자
                         
+                        // 편지 관련 - 모든 편지 API는 인증 필요 (권한은 서비스에서 처리)
+                        .requestMatchers("GET", "/letters/warmemoir/*/count").permitAll() // 회고록별 편지 개수 조회는 공개
+                        .requestMatchers("/letters/**").authenticated() // 나머지 편지 API는 인증 필요
+                        
+                        // 내 댓글 관련 - 인증 필요
+                        .requestMatchers("/replies/my/**").authenticated() // 내 댓글 API는 인증 필요
+                        
                         // 인증이 필요한 사용자 API
                         .requestMatchers("/user/**").authenticated()
                         // 나머지 요청은 인증 필요
