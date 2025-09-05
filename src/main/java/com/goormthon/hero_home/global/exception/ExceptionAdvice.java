@@ -6,10 +6,12 @@ import com.goormthon.hero_home.global.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,6 +57,25 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 });
 
         return handleExceptionInternalArgs(ex, HttpHeaders.EMPTY, ErrorStatus.BAD_REQUEST, request, errors);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Object> handleAuthorizationDenied(AuthorizationDeniedException e, WebRequest request) {
+        log.warn("Access denied: {}", e.getMessage());
+        
+        return handleExceptionInternalFalse(e, ErrorStatus.FORBIDDEN, HttpHeaders.EMPTY, ErrorStatus.FORBIDDEN.getHttpStatus(), request, "접근 권한이 부족합니다.");
+    }
+
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<Object> handleInvalidDataAccessApiUsage(InvalidDataAccessApiUsageException e, WebRequest request) {
+        log.warn("Invalid data access usage: {}", e.getMessage());
+        
+        String message = "잘못된 정렬 또는 쿼리 파라미터입니다.";
+        if (e.getMessage() != null && e.getMessage().contains("Sort expression")) {
+            message = "유효하지 않은 정렬 필드입니다. 사용 가능한 필드: id, title, createdAt, updatedAt";
+        }
+        
+        return handleExceptionInternalFalse(e, ErrorStatus.BAD_REQUEST, HttpHeaders.EMPTY, ErrorStatus.BAD_REQUEST.getHttpStatus(), request, message);
     }
 
     @ExceptionHandler
