@@ -20,6 +20,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -113,14 +114,17 @@ public class WarMemoirController {
         }
     }
 
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "회고록 생성", description = "새로운 참전 회고록을 생성합니다. (관리자 전용)")
     public ResponseEntity<ApiResponse<WarMemoirResponseDto>> createWarMemoir(
-            @Valid @RequestBody WarMemoirRequestDto requestDto) {
+            @Parameter(description = "회고록 정보") 
+            @RequestPart("requestDto") @Valid WarMemoirRequestDto requestDto,
+            @Parameter(description = "대표 이미지 파일")
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) {
         
         try {
-            WarMemoirResponseDto createdWarMemoir = warMemoirService.createWarMemoir(requestDto);
+            WarMemoirResponseDto createdWarMemoir = warMemoirService.createWarMemoir(requestDto, imageFile);
             return ResponseEntity.ok(ApiResponse.onSuccess(createdWarMemoir));
             
         } catch (Exception e) {
@@ -130,16 +134,19 @@ public class WarMemoirController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "회고록 수정", description = "기존 회고록을 수정합니다. (관리자 전용)")
     public ResponseEntity<ApiResponse<WarMemoirResponseDto>> updateWarMemoir(
             @Parameter(description = "회고록 ID")
             @PathVariable Long id,
-            @Valid @RequestBody WarMemoirRequestDto requestDto) {
+            @Parameter(description = "회고록 정보") 
+            @RequestPart("requestDto") @Valid WarMemoirRequestDto requestDto,
+            @Parameter(description = "대표 이미지 파일")
+            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) {
         
         try {
-            WarMemoirResponseDto updatedWarMemoir = warMemoirService.updateWarMemoir(id, requestDto);
+            WarMemoirResponseDto updatedWarMemoir = warMemoirService.updateWarMemoir(id, requestDto, imageFile);
             return ResponseEntity.ok(ApiResponse.onSuccess(updatedWarMemoir));
             
         } catch (IllegalArgumentException e) {
