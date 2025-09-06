@@ -28,6 +28,12 @@ public interface WarMemoirReplyRepository extends JpaRepository<WarMemoirReply, 
     @Query("SELECT COUNT(r) FROM WarMemoirReply r WHERE r.warMemoir.id = :warMemoirId")
     Long countByWarMemoirId(@Param("warMemoirId") Long warMemoirId);
 
+    @Query("SELECT r FROM WarMemoirReply r JOIN FETCH r.warMemoir w JOIN FETCH r.user u WHERE r.user = :user")
+    Page<WarMemoirReply> findByUserWithWarMemoir(@Param("user") User user, Pageable pageable);
+
+    @Query("SELECT COUNT(r) FROM WarMemoirReply r WHERE r.user = :user")
+    Long countByUser(@Param("user") User user);
+
     void deleteByWarMemoir(WarMemoir warMemoir);
 
     void deleteByUser(User user);

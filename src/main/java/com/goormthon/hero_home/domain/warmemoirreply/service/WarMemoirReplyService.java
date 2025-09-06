@@ -96,4 +96,16 @@ public class WarMemoirReplyService {
     public boolean existsById(Long replyId) {
         return warMemoirReplyRepository.existsById(replyId);
     }
+
+    public Page<WarMemoirReplyResponseDto> getMyReplies(User user, Pageable pageable) {
+        Page<WarMemoirReply> replies = warMemoirReplyRepository.findByUserWithWarMemoir(user, pageable);
+        
+        log.debug("사용자 댓글 목록 조회: {} (총 {}개)", user.getEmail(), replies.getTotalElements());
+        
+        return replies.map(WarMemoirReplyResponseDto::from);
+    }
+
+    public Long getMyReplyCount(User user) {
+        return warMemoirReplyRepository.countByUser(user);
+    }
 }
