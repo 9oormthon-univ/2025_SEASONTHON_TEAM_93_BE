@@ -12,6 +12,7 @@ public class SponsorshipStatusConverter {
                 .sponsorshipAmount(sponsorshipStatus.getSponsorshipAmount())
                 .sponsorshipBoardId(sponsorshipStatus.getSponsorshipBoard().getId())
                 .email(sponsorshipStatus.getUser().getEmail())
+                .name(sponsorshipStatus.getUser().getName())
                 .createdAt(sponsorshipStatus.getCreatedAt())
                 .isApproved(sponsorshipStatus.getIsApproved())
                 .build();
