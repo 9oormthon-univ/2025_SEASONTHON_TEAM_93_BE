@@ -21,7 +21,7 @@ public class WarMemoirRequestDto {
     @Schema(description = "회고록 제목", example = "6.25 전쟁 참전 경험")
     private String title;
 
-    @Schema(description = "대표 이미지 URL", example = "https://example.com/image.jpg")
+    @Schema(description = "대표 이미지 URL (파일 업로드 시 자동 설정)", example = "https://example.com/image.jpg")
     private String image;
 
     @Valid
