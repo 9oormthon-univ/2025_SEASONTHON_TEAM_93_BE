@@ -24,7 +24,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
-    @Value("${app.oauth2.success-redirect-url:http://localhost:3000/oauth/success}")
+    @Value("${app.oauth2.success-redirect-url:http://warhero.site}")
     private String successRedirectUrl;
 
     @Override
