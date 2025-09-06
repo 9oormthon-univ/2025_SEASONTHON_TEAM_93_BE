@@ -23,5 +23,6 @@ public class SponsorshipBoardResponseDto {
         Integer currentAmount;
         SponsorshipBoardStatus sponsorshipBoardStatus;
         List<String> sponsorshipBoardPhotos;
+        Integer percent;
     }
 }

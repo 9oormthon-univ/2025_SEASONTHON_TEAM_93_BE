@@ -24,5 +24,6 @@ public class SponsorshipStatusResponseDto {
     public static class SponsorshipProgressInfo {
         Integer targetAmount;
         Integer currentAmount;
+        Integer percent;
     }
 }

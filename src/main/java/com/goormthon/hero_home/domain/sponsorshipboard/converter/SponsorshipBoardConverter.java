@@ -1,5 +1,6 @@
 package com.goormthon.hero_home.domain.sponsorshipboard.converter;
 
+import com.goormthon.hero_home.domain.common.PercentUtils;
 import com.goormthon.hero_home.domain.sponsorshipboard.dto.SponsorshipBoardResponseDto;
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoard;
 import com.goormthon.hero_home.domain.sponsorshipboard.entity.SponsorshipBoardPhotos;
@@ -21,6 +22,10 @@ public class SponsorshipBoardConverter {
                 .endDate(sponsorshipBoard.getEndDate())
                 .currentAmount(sponsorshipBoard.getCurrentAmount())
                 .sponsorshipBoardPhotos(photos.stream().map(SponsorshipBoardPhotos::getFilePath).collect(Collectors.toList()))
+                .percent(PercentUtils.calculatePercent(
+                        sponsorshipBoard.getCurrentAmount(),
+                        sponsorshipBoard.getTargetAmount()
+                ))
                 .build();
     }
 }

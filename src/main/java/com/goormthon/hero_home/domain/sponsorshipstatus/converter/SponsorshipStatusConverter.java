@@ -1,5 +1,6 @@
 package com.goormthon.hero_home.domain.sponsorshipstatus.converter;
 
+import com.goormthon.hero_home.domain.common.PercentUtils;
 import com.goormthon.hero_home.domain.sponsorshipstatus.dto.SponsorshipStatusResponseDto;
 import com.goormthon.hero_home.domain.sponsorshipstatus.entity.SponsorshipStatus;
 
@@ -20,6 +21,7 @@ public class SponsorshipStatusConverter {
         return SponsorshipStatusResponseDto.SponsorshipProgressInfo.builder()
                 .targetAmount(targetAmount)
                 .currentAmount(currentAmount)
+                .percent(PercentUtils.calculatePercent(currentAmount, targetAmount))
                 .build();
     }
 }
