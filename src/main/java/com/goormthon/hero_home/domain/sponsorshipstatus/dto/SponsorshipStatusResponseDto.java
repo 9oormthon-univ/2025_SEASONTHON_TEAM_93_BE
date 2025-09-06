@@ -17,6 +17,7 @@ public class SponsorshipStatusResponseDto {
         String email;
         LocalDateTime createdAt;
         Long sponsorshipBoardId;
+        String name;
     }
 
     @Getter

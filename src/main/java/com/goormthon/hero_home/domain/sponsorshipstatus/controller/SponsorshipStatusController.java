@@ -30,13 +30,13 @@ public class SponsorshipStatusController {
     }
 
     @GetMapping("/")
-    @Operation(summary = "관리자의 후원 승인 리스트", description = "관리자의 후원 승인 리스트 API")
+    @Operation(summary = "관리자 후원 현황 리스트", description = "관리자 후원 현황 리스트 API")
     public ApiResponse<List<SponsorshipStatusResponseDto.SponsorshipDonationInfo>> getAllSponsorshipStatus(Authentication authentication) {
         return ApiResponse.onSuccess(sponsorshipStatusService.getAllSponsorshipStatus(authentication));
     }
 
     @PostMapping("/{statusId}")
-    @Operation(summary = "관리자의 후원 승인", description = "관리자의 후원 승인 API")
+    @Operation(summary = "관리자의 유저 후원 승인", description = "관리자의 유저 후원 승인 API")
     public ApiResponse<String> approveDonation(@PathVariable Long statusId, Authentication authentication) {
         sponsorshipStatusService.approveDonation(statusId, authentication);
         return ApiResponse.onSuccess("Approve Donation successful.");
